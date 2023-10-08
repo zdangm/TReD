@@ -128,6 +128,6 @@ for (dataset_index in 1:7){
   if(!dir.exists(paste0(output, dataset, '/'))){
     dir.create(paste0(output, dataset, '/'))
   }
-  write.table(result, file = paste0(output, dataset, '/d_', args, '.txt'), sep = '\t')                                
+  write.table(result, file = paste0(output, dataset, '/reversal_d.txt'), sep = '\t')                                
 }
 
