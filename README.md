@@ -9,3 +9,4 @@
 - TReS/data/compound_d_immune/ : save the revesal distance computed by us;
 
 ## Tool
+Predixcan(https://www.nature.com/articles/ng.3367, https://github.com/gamazonlab/MR-JTI/blob/master/model_training/predixcan/)
