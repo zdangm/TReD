@@ -20,8 +20,7 @@ for (i in 1:7){
   colnames(immune_instances_rs)[which(colnames(immune_instances_rs) == 'pert_id')] = 'sig_id'
   immune_instances_rs = merge(immune_instances_rs, siginfo_beta[, c('sig_id', 'pert_id')], by = 'sig_id')
   immune_drug_instances_rs = merge(immune_instances_rs, unique(annotation_df[, c('pert_id', 'common_name')]))
-  write.table(immune_drug_instances_rs, file = paste0('immune_drug_instances/', dataset, '.csv'), row.names = F, sep = ',')
-
+  
   ### subset d>mean+2sd & p<0.05
   sub_immune_drug_instances_rs = immune_drug_instances_rs[which(immune_drug_instances_rs$drug_d > (mean(immune_drug_instances_rs$drug_d) + 2*sd(immune_drug_instances_rs$drug_d))),]
   sub_immune_drug_instances_rs = sub_immune_drug_instances_rs[which(sub_immune_drug_instances_rs$permutation_p < 0.05),]
@@ -51,3 +50,8 @@ for (i in 1:7){
     all_sub_immune_drug_rs_cell = rbind(all_sub_immune_drug_rs_cell, sub_immune_drug_rs_cell)
   }
 }
+
+sub_annotation_df_cell = merge(annotation_df, data.frame(pert_id = unique(all_sub_immune_drug_rs_cell$pert_id)), by = 'pert_id')
+write.table(sub_annotation_df_cell, file = 'sub_annotation_df_cell.csv', sep = ',', row.names = F)
+write.table(all_sub_immune_drug_instances_rs, file = 'all_sub_immune_drug_instances_rs.csv', sep = ',', row.names = F)
+write.table(all_sub_immune_drug_rs_cell, file = 'all_sub_immune_drug_rs_cell.csv', sep = ',', row.names = F)
