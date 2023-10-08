@@ -1,5 +1,5 @@
 options(warn = -1)
-setwd('~/TReS')
+setwd('~/TReS/data/')
 
 library(data.table)
 library(AnnotationDbi)
