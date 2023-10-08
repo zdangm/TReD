@@ -14,6 +14,20 @@ library(doMC)
 registerDoMC(cores=max(detectCores() - 1, 1))
 
 
+###define function
+##twas_sig_rs: a dataframe consisting of twas sig genes' geneid and rank, this rank is a ratio which represents the rank
+##drug_sig_rs: a dataframe of drug same as twas_sig_rs
+##return: reversal distance, d
+compute_d = function(twas_sig_rs, drug_sig_rs){
+  twas_rank = twas_sig_rs$twas_rank - 0.5 #vector of twas rank
+  drug_rank = drug_sig_rs$drug_rank - 0.5 #vector of drug rank
+  twas_rank_norm = sqrt(sum(twas_rank**2)) #norm of twas rank
+  drug_rank_norm = sqrt(sum(drug_rank**2)) #norm of drug rank
+  cosine_seta = sum(twas_rank*drug_rank) / (twas_rank_norm*drug_rank_norm) #cos(seta)
+  d = drug_rank_norm*(-cosine_seta) #the d we need
+  return(d)
+}
+
 ## load compound signatures
 gene_list = as.data.frame(fread('row.csv'))
 compound_signatures = as.data.frame(fread('compound_signatures/exp_mat.csv'))
