@@ -36,7 +36,7 @@ for (i in 1:7){
     return(bool_value)
   })
 
-  ## summary
+  ### summary 
   if (i == 1){
     all_sub_immune_drug_instances_rs = sub_immune_drug_instances_rs
   } else{
@@ -44,15 +44,10 @@ for (i in 1:7){
   }
   sub_immune_drug_instances_cell = sub_immune_drug_instances_rs[sub_immune_drug_instances_rs$cell_bool, ]
   sub_immune_drug_rs_cell = sub_immune_drug_instances_cell %>% group_by(pert_id) %>% dplyr::slice(which.max(drug_d)) %>% as.data.frame
-  
 
   if (i == 1){
     all_sub_immune_drug_rs_cell = sub_immune_drug_rs_cell
-    all_sub_immune_drug_rs_dose = sub_immune_drug_rs_dose
-    all_sub_immune_drug_rs_time = sub_immune_drug_rs_time
   } else{
     all_sub_immune_drug_rs_cell = rbind(all_sub_immune_drug_rs_cell, sub_immune_drug_rs_cell)
-    all_sub_immune_drug_rs_dose = rbind(all_sub_immune_drug_rs_dose, sub_immune_drug_rs_dose)
-    all_sub_immune_drug_rs_time = rbind(all_sub_immune_drug_rs_time, sub_immune_drug_rs_time)
   }
 }
