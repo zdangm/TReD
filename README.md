@@ -3,7 +3,16 @@
 
 ## Workdir
 - TReS/data/DGE_rs/ : save the DGE results and processed DGE results;
+  >including:
+  > - ALV_DE.csv
+  > - BALF.csv
+  > - EXP.csv
 - TReS/data/TWAS_rs/ : save the TWAS results and processed TWAS results;
+  >including
+  > - blood.txt ()
+  > - lung.txt
+  > - lymphocytes.txt
+  > - spleen.txt
 - TReS/data/LINCS2_beta/ : save the compound signatures downloaded from LINC2 database and processed annotation files;
   >including:
   > - siginfo_beta.txt (Metadata for level 5 signatures, can be downloaded from LINCS2)
