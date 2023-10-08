@@ -1,3 +1,4 @@
+# parse the gctx file
 from cmapPy.pandasGEXpress.parse import parse
 import pandas as pd
 import numpy as np
