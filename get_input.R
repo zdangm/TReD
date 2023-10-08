@@ -8,6 +8,7 @@ library(tidyr)
 library(data.table)
 
 
+### get TWAS rs and DGE rs
 datasets = c('blood', 'lung', 'lymphocytes', 'spleen', 'ALV', 'EXP', 'BALF')
 for (dataset in datasets){
   if (dataset %in% c('blood', 'lung', 'lymphocytes', 'spleen')){
