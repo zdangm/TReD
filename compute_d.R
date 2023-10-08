@@ -74,46 +74,61 @@ for (dataset_index in 1:7){
     twas_sig_gene = subset(dge_rs, select = c('GeneID', 'dge_rank'))
     colnames(twas_sig_gene)[2] = 'twas_rank'
   }
-}
 
-#scale the rank to equal step series
-twas_sig_gene$twas_rank = rank(twas_sig_gene$twas_rank) / nrow(twas_sig_gene)                                
-
-### start computing rand_drug_d  
-print('start computing rand_drug_d')
-N_PERMUTATIONS <- 1000
-rand_drug_d = foreach(drug_id = 1:ncol(compound_signatures)) %dopar% {
-  ## get drug gene rank
-  drug_rs = as.data.frame(subset(compound_signatures, select = drug_id))
-  drug_rs[1] = rank(-drug_rs[1]) / (dim(drug_rs)[1])  #uniformly distributed
-  drug_rs = cbind(gene_list, drug_rs)
-  colnames(drug_rs) = c('GeneID', 'drug_rank')
-  temp_sig_rs = merge(twas_sig_gene, drug_rs, by = 'GeneID')
+  #scale the rank to equal step series
+  twas_sig_gene$twas_rank = rank(twas_sig_gene$twas_rank) / nrow(twas_sig_gene)                                
   
-  ## get null distribution
-  #print(paste0('Now we are computing null distribution of ', drug_id))
-  null_drug_d_rand1000 = sapply(1:N_PERMUTATIONS, function(i){
-    set.seed(i)
-    temp_sig_rs$drug_rank = rank(temp_sig_rs$drug_rank) / nrow(temp_sig_rs)
-    temp_sig_rs$drug_rank = sample(temp_sig_rs$drug_rank, length(temp_sig_rs$drug_rank))
+  ### start computing rand_drug_d  
+  print('start computing rand_drug_d')
+  N_PERMUTATIONS <- 1000
+  rand_drug_d = foreach(drug_id = 1:ncol(compound_signatures)) %dopar% {
+    ## get drug gene rank
+    drug_rs = as.data.frame(subset(compound_signatures, select = drug_id))
+    drug_rs[1] = rank(-drug_rs[1]) / (dim(drug_rs)[1])  #uniformly distributed
+    drug_rs = cbind(gene_list, drug_rs)
+    colnames(drug_rs) = c('GeneID', 'drug_rank')
+    temp_sig_rs = merge(twas_sig_gene, drug_rs, by = 'GeneID')
+    
+    ## get null distribution
+    #print(paste0('Now we are computing null distribution of ', drug_id))
+    null_drug_d_rand1000 = sapply(1:N_PERMUTATIONS, function(i){
+      set.seed(i)
+      temp_sig_rs$drug_rank = rank(temp_sig_rs$drug_rank) / nrow(temp_sig_rs)
+      temp_sig_rs$drug_rank = sample(temp_sig_rs$drug_rank, length(temp_sig_rs$drug_rank))
+      twas_sig_rs = subset(temp_sig_rs, select = c('GeneID', 'twas_rank'))
+      drug_sig_rs = subset(temp_sig_rs, select = c('GeneID', 'drug_rank'))
+      return(compute_d(twas_sig_rs, drug_sig_rs))
+    })
+    return(null_drug_d_rand1000)
+  }
+  
+  ### start computing drug_d
+  print('start computing drug_d')
+  drug_d = sapply(1:ncol(compound_signatures), function(drug_id){
+    #print(paste0('Now we are computing d of ', drug_id))
+    drug_rs = as.data.frame(subset(compound_signatures, select = drug_id))
+    drug_rs[1] = rank(-drug_rs[1]) / (dim(drug_rs)[1])
+    drug_rs = cbind(gene_list, drug_rs)
+    colnames(drug_rs) = c('GeneID', 'drug_rank')
+    temp_sig_rs = merge(twas_sig_gene, drug_rs, by = 'GeneID')
+    temp_sig_rs$drug_rank = rank(temp_sig_rs$drug_rank)/nrow(temp_sig_rs)
     twas_sig_rs = subset(temp_sig_rs, select = c('GeneID', 'twas_rank'))
     drug_sig_rs = subset(temp_sig_rs, select = c('GeneID', 'drug_rank'))
     return(compute_d(twas_sig_rs, drug_sig_rs))
   })
-  return(null_drug_d_rand1000)
+  
+  ### summary                               
+  result = data.frame(pert_id = colnames(compound_signatures),
+                      drug_d = drug_d,
+                      data_set = dataset)
+  result$permutation_p = sapply(1:ncol(compound_signatures),function(i) {
+    d = result$drug_d[i]
+    length(which(rand_drug_d[[i]] >= d)) / length(rand_drug_d[[i]])
+  })
+  
+  if(!dir.exists(paste0(output, dataset, '/'))){
+    dir.create(paste0(output, dataset, '/'))
+  }
+  write.table(result, file = paste0(output, dataset, '/d_', args, '.txt'), sep = '\t')                                
 }
 
-### start computing drug_d
-print('start computing drug_d')
-drug_d = sapply(1:ncol(compound_signatures), function(drug_id){
-  #print(paste0('Now we are computing d of ', drug_id))
-  drug_rs = as.data.frame(subset(compound_signatures, select = drug_id))
-  drug_rs[1] = rank(-drug_rs[1]) / (dim(drug_rs)[1])
-  drug_rs = cbind(gene_list, drug_rs)
-  colnames(drug_rs) = c('GeneID', 'drug_rank')
-  temp_sig_rs = merge(twas_sig_gene, drug_rs, by = 'GeneID')
-  temp_sig_rs$drug_rank = rank(temp_sig_rs$drug_rank)/nrow(temp_sig_rs)
-  twas_sig_rs = subset(temp_sig_rs, select = c('GeneID', 'twas_rank'))
-  drug_sig_rs = subset(temp_sig_rs, select = c('GeneID', 'drug_rank'))
-  return(compute_d(twas_sig_rs, drug_sig_rs))
-})
