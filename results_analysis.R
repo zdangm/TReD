@@ -16,4 +16,9 @@ for (i in 1:7){
   print(dataset)
 
   immune_instances_rs = as.data.frame(fread(paste0(dataset, '/reversal_d.txt')))
+  immune_instances_rs = immune_instances_rs[, -which(colnames(immune_instances_rs) == 'V1')]
+  colnames(immune_instances_rs)[which(colnames(immune_instances_rs) == 'pert_id')] = 'sig_id'
+  immune_instances_rs = merge(immune_instances_rs, siginfo_beta[, c('sig_id', 'pert_id')], by = 'sig_id')
+  immune_drug_instances_rs = merge(immune_instances_rs, unique(annotation_df[, c('pert_id', 'common_name')]))
+  write.table(immune_drug_instances_rs, file = paste0('immune_drug_instances/', dataset, '.csv'), row.names = F, sep = ',')
 }
