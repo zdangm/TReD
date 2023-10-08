@@ -67,7 +67,7 @@ for (dataset in datasets){
 }
 
 ### get drug annotations
-compound_info_beta = fread('/LINCS2_beta/compoundinfo_beta.txt')
+compound_info_beta = as.data.frame(fread('/LINCS2_beta/compoundinfo_beta.txt'))
 
 drugbank_info = fread("/drugbank/drugbank vocabulary_5.1.10.csv")
 drugbank_info$'Common name'<-toupper(drugbank_info$'Common name')
