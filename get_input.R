@@ -68,13 +68,10 @@ for (dataset in datasets){
 
 ### get drug annotations
 compound_info_beta = as.data.frame(fread('/LINCS2_beta/compoundinfo_beta.txt'))
-
 drugbank_info = as.data.frame(fread("/drugbank/drugbank vocabulary_5.1.10.csv"))
 drugbank_info$'Common name'<-toupper(drugbank_info$'Common name')
 drugbank_info$Synonyms<-toupper(drugbank_info$Synonyms)
-
 annotation_df = compound_info_beta[, c('pert_id', 'inchi_key', 'cmap_name', 'compound_aliases', 'target', 'moa')]
-
 ## set "not" to no nchikey
 annotation_df$inchi_key = as.character(annotation_df$inchi_key)
 annotation_df$inchi_key = ifelse(nchar(annotation_df$inchi_key) > 0, annotation_df$inchi_key, "not")
