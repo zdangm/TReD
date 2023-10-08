@@ -98,10 +98,22 @@ rand_drug_d = foreach(drug_id = 1:ncol(compound_signatures)) %dopar% {
     temp_sig_rs$drug_rank = sample(temp_sig_rs$drug_rank, length(temp_sig_rs$drug_rank))
     twas_sig_rs = subset(temp_sig_rs, select = c('GeneID', 'twas_rank'))
     drug_sig_rs = subset(temp_sig_rs, select = c('GeneID', 'drug_rank'))
-    
     return(compute_d(twas_sig_rs, drug_sig_rs))
   })
   return(null_drug_d_rand1000)
 }
 
-
+### start computing drug_d
+print('start computing drug_d')
+drug_d = sapply(1:ncol(compound_signatures), function(drug_id){
+  #print(paste0('Now we are computing d of ', drug_id))
+  drug_rs = as.data.frame(subset(compound_signatures, select = drug_id))
+  drug_rs[1] = rank(-drug_rs[1]) / (dim(drug_rs)[1])
+  drug_rs = cbind(gene_list, drug_rs)
+  colnames(drug_rs) = c('GeneID', 'drug_rank')
+  temp_sig_rs = merge(twas_sig_gene, drug_rs, by = 'GeneID')
+  temp_sig_rs$drug_rank = rank(temp_sig_rs$drug_rank)/nrow(temp_sig_rs)
+  twas_sig_rs = subset(temp_sig_rs, select = c('GeneID', 'twas_rank'))
+  drug_sig_rs = subset(temp_sig_rs, select = c('GeneID', 'drug_rank'))
+  return(compute_d(twas_sig_rs, drug_sig_rs))
+})
