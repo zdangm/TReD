@@ -29,7 +29,7 @@ compute_d = function(twas_sig_rs, drug_sig_rs){
 
 ## load compound signatures
 gene_list = as.data.frame(fread('row.csv'))
-compound_signatures = as.data.frame(fread('compound_signatures/exp_mat.csv'))
+compound_signatures = as.data.frame(fread('LINCS2_beta/exp_mat.csv'))
 row.names(compound_signatures) = gene_list$rid
 
 ## load cell name
