@@ -14,4 +14,6 @@ datasets = c('blood', 'lung', 'lymphocytes', 'spleen', 'ALV', 'EXP', 'BALF')
 for (i in 1:7){
   dataset = datasets[i]
   print(dataset)
+
+  immune_instances_rs = as.data.frame(fread())
 }
