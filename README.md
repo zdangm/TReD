@@ -19,7 +19,7 @@
   > - compoundinfo_beta.txt (metadata for compounds, can be downloaded from LINCS2)
   > - beta_immuncelline_revised.txt (immune cell lines, can be downloaded from LINCS2)
   > - level5_beta_trt_cp_n720216x12328.gctx (level 5 compound signatures, can be downloaded from LINCS2)
-- TReS/data/drugbank/ : save the drugbank vocabulary file;  
+- TReS/data/drugbank/ : save the drugbank vocabulary file (drugbank vocabulary_5.1.10.csv, load from drugbank);  
 - TReS/data/compound_d_immune/ : save the revesal distance computed by us;  
 
 ## Tool
