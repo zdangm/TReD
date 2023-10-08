@@ -15,5 +15,5 @@ for (i in 1:7){
   dataset = datasets[i]
   print(dataset)
 
-  immune_instances_rs = as.data.frame(fread())
+  immune_instances_rs = as.data.frame(fread(paste0(dataset, '/reversal_d.txt')))
 }
