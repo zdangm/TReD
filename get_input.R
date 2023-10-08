@@ -67,9 +67,9 @@ for (dataset in datasets){
 }
 
 ### get drug annotations
-compound_info_beta = fread('/data/g_gamazon_lab/zhoud2/data/cmap/raw/LINCS/LINCS2_beta/compoundinfo_beta.txt')
+compound_info_beta = fread('/LINCS2_beta/compoundinfo_beta.txt')
 
-drugbank_info = fread("/data/g_gamazon_lab/zhoud2/data/drugbank/raw/drugbank vocabulary_5.1.10.csv")
+drugbank_info = fread("/drugbank/drugbank vocabulary_5.1.10.csv")
 drugbank_info$'Common name'<-toupper(drugbank_info$'Common name')
 drugbank_info$Synonyms<-toupper(drugbank_info$Synonyms)
 
@@ -100,5 +100,5 @@ temp_drugbank_info = drugbank_info[, c('DrugBank ID', 'Common name')]
 colnames(temp_drugbank_info) = c('drugbank_id', 'common_name')
 annotation_df = merge(annotation_df, temp_drugbank_info, by = 'drugbank_id')
 annotation_df = annotation_df[, -match(c('inchikey_annot', 'cmap_name_annota2Common_name', 'compound_aliases_annota2Common_name'), colnames(annotation_df))]
-write.table(annotation_df, file = '/data/g_gamazon_lab/zhoud2/covid19_drug_reposition/compound_d/annotation_df.txt', sep = '\t', row.names = F)
+write.table(annotation_df, file = '/LINCS2_beta/annotation_df.txt', sep = '\t', row.names = F)
 
