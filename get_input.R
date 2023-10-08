@@ -66,5 +66,39 @@ for (dataset in datasets){
   }  
 }
 
+### get drug annotations
+compound_info_beta = fread('/data/g_gamazon_lab/zhoud2/data/cmap/raw/LINCS/LINCS2_beta/compoundinfo_beta.txt')
 
+drugbank_info = fread("/data/g_gamazon_lab/zhoud2/data/drugbank/raw/drugbank vocabulary_5.1.10.csv")
+drugbank_info$'Common name'<-toupper(drugbank_info$'Common name')
+drugbank_info$Synonyms<-toupper(drugbank_info$Synonyms)
+
+annotation_df = compound_info_beta[, c('pert_id', 'inchi_key', 'cmap_name', 'compound_aliases', 'target', 'moa')]
+## set "not" to no nchikey
+annotation_df$inchi_key = as.character(annotation_df$inchi_key)
+annotation_df$inchi_key = ifelse(nchar(annotation_df$inchi_key) > 0, annotation_df$inchi_key, "not")
+## upper
+annotation_df$cmap_name = toupper(annotation_df$cmap_name)
+annotation_df$compound_aliases = toupper(annotation_df$compound_aliases)
+## annotate
+annotation_df$inchikey_annot = drugbank_info$'DrugBank ID'[match(annotation_df$inchi_key, drugbank_info$'Standard InChI Key')]
+annotation_df$cmap_name_annota2Common_name = drugbank_info$'DrugBank ID'[match(annotation_df$cmap_name, drugbank_info$'Common name')]
+annotation_df$compound_aliases_annota2Common_name = drugbank_info$'DrugBank ID'[match(annotation_df$compound_aliases, drugbank_info$'Common name')]
+annotation_df$drugbank_id = NA
+annotation_df = as.data.frame(unique(annotation_df))
+## combine result
+for(j in 1:nrow(annotation_df)){
+  tmp<-unname(annotation_df[j, c("inchikey_annot","cmap_name_annota2Common_name","compound_aliases_annota2Common_name")])
+  tmp<-tmp[!is.na(tmp)]
+  tmp<-tmp[tmp!="NULL"]
+  tmp<-unique(tmp)
+  if(length(tmp)>0){
+    annotation_df$drugbank_id[j]<-tmp
+  }
+}
+temp_drugbank_info = drugbank_info[, c('DrugBank ID', 'Common name')]
+colnames(temp_drugbank_info) = c('drugbank_id', 'common_name')
+annotation_df = merge(annotation_df, temp_drugbank_info, by = 'drugbank_id')
+annotation_df = annotation_df[, -match(c('inchikey_annot', 'cmap_name_annota2Common_name', 'compound_aliases_annota2Common_name'), colnames(annotation_df))]
+write.table(annotation_df, file = '/data/g_gamazon_lab/zhoud2/covid19_drug_reposition/compound_d/annotation_df.txt', sep = '\t', row.names = F)
 
