@@ -4,8 +4,6 @@ work_dir = '~/TReS/'
 setwd(work_dir)
 output = 'compound_d_immune/'
 
-library(AnnotationDbi)
-library(org.Hs.eg.db)
 library(tidyr)
 library(data.table)
 library(hdf5r)
