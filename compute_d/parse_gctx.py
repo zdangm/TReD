@@ -5,6 +5,7 @@ import numpy as np
 import os
 os.chdir('TReS/data/LINCS2_beta/')
 
+
 gctx_file = "level5_beta_trt_cp_n720216x12328.gctx"
 print('start parsing')
 gctx_data = parse(gctx_file)
