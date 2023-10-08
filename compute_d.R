@@ -2,6 +2,7 @@ options(warn = -1)
 
 work_dir = '~/TReS/'
 setwd(work_dir)
+output = 'compound_d_immune/'
 
 library(AnnotationDbi)
 library(org.Hs.eg.db)
