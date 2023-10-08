@@ -21,4 +21,38 @@ for (i in 1:7){
   immune_instances_rs = merge(immune_instances_rs, siginfo_beta[, c('sig_id', 'pert_id')], by = 'sig_id')
   immune_drug_instances_rs = merge(immune_instances_rs, unique(annotation_df[, c('pert_id', 'common_name')]))
   write.table(immune_drug_instances_rs, file = paste0('immune_drug_instances/', dataset, '.csv'), row.names = F, sep = ',')
+
+  ### subset d>mean+2sd & p<0.05
+  sub_immune_drug_instances_rs = immune_drug_instances_rs[which(immune_drug_instances_rs$drug_d > (mean(immune_drug_instances_rs$drug_d) + 2*sd(immune_drug_instances_rs$drug_d))),]
+  sub_immune_drug_instances_rs = sub_immune_drug_instances_rs[which(sub_immune_drug_instances_rs$permutation_p < 0.05),]
+  
+  ## match pert_idose, pert_iname, cell_iname
+  sub_immune_drug_instances_rs = merge(sub_immune_drug_instances_rs, siginfo_beta[, c('sig_id', 'pert_idose', 'pert_itime', 'cell_iname')], by = 'sig_id')
+  ## whether effecticive under multi-cell
+  pert_ids = sub_immune_drug_instances_rs$pert_id
+  sub_immune_drug_instances_rs$cell_bool = sapply(1:length(pert_ids), function(index){
+    temp_subrs = sub_immune_drug_instances_rs[which(pert_ids == pert_ids[index]), ]
+    bool_value = length(unique(temp_subrs$cell_iname)) >= 2
+    return(bool_value)
+  })
+
+  ## summary
+  if (i == 1){
+    all_sub_immune_drug_instances_rs = sub_immune_drug_instances_rs
+  } else{
+    all_sub_immune_drug_instances_rs = rbind(all_sub_immune_drug_instances_rs, sub_immune_drug_instances_rs)
+  }
+  sub_immune_drug_instances_cell = sub_immune_drug_instances_rs[sub_immune_drug_instances_rs$cell_bool, ]
+  sub_immune_drug_rs_cell = sub_immune_drug_instances_cell %>% group_by(pert_id) %>% dplyr::slice(which.max(drug_d)) %>% as.data.frame
+  
+
+  if (i == 1){
+    all_sub_immune_drug_rs_cell = sub_immune_drug_rs_cell
+    all_sub_immune_drug_rs_dose = sub_immune_drug_rs_dose
+    all_sub_immune_drug_rs_time = sub_immune_drug_rs_time
+  } else{
+    all_sub_immune_drug_rs_cell = rbind(all_sub_immune_drug_rs_cell, sub_immune_drug_rs_cell)
+    all_sub_immune_drug_rs_dose = rbind(all_sub_immune_drug_rs_dose, sub_immune_drug_rs_dose)
+    all_sub_immune_drug_rs_time = rbind(all_sub_immune_drug_rs_time, sub_immune_drug_rs_time)
+  }
 }
