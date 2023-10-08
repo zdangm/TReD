@@ -60,7 +60,10 @@ for (dataset_index in 1:7){
     twas_sig_gene = subset(dge_rs, select = c('GeneID', 'dge_rank'))
     colnames(twas_sig_gene)[2] = 'twas_rank'
   }
-}                                
+}
+
+#scale the rank to equal step series
+twas_sig_gene$twas_rank = rank(twas_sig_gene$twas_rank) / nrow(twas_sig_gene)                                
 
 
 
