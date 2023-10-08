@@ -2,7 +2,7 @@ options(warn = -1)
 
 work_dir = '~/TReS/'
 setwd(work_dir)
-output = 'compound_d_immune/'
+output = 'data/compound_d_immune/'
 
 library(tidyr)
 library(data.table)
