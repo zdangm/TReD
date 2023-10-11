@@ -1,4 +1,4 @@
-# TReS
+# TReD
 ## Introduction
 
 ## Workdir
